@@ -35,6 +35,16 @@ void removeFalseCrevasses(t_map);
 
 /* definition of local functions */
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : getBaseStationPosition
+Cette fonction recherche la position de la station de base dans la carte (map). Elle parcourt chaque cellule jusqu'à
+trouver la position marquée comme station de base.
+Elle prend en paramètre :
+  - `map` : la carte de type `t_map`.
+Elle renvoie la position de la station de base sous forme de `t_position`.
+Si aucune station de base n'est trouvée, elle affiche un message d'erreur et termine le programme.
+----------------------------------------------------------------------------------------------------------------------*/
 t_position getBaseStationPosition(t_map map)
 {
     t_position pos;
@@ -64,6 +74,15 @@ t_position getBaseStationPosition(t_map map)
     return pos;
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : removeFalseCrevasses
+Cette fonction supprime les faux coûts de crevasse dans la carte. Elle ajuste les coûts des cases incorrectement marquées
+pour éviter toute confusion dans les calculs de coût.
+Elle prend en paramètre :
+  - `map` : la carte de type `t_map`.
+Elle ne renvoie rien et modifie directement le tableau `map.costs`.
+----------------------------------------------------------------------------------------------------------------------*/
 void removeFalseCrevasses(t_map map)
 {
     // step 1 : find the minimal cost > 10000 in the costs array where the soil is not a crevasse
@@ -124,6 +143,15 @@ void removeFalseCrevasses(t_map map)
     }
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : calculateCosts
+Cette fonction calcule les coûts de déplacement dans la carte à partir de la station de base en utilisant une approche
+de parcours en largeur. Elle utilise les coûts du sol pour établir les coûts de chaque position sur la carte.
+Elle prend en paramètre :
+  - `map` : la carte de type `t_map`.
+Elle ne renvoie rien et modifie directement le tableau `map.costs`.
+----------------------------------------------------------------------------------------------------------------------*/
 void calculateCosts(t_map map)
 {
     t_position baseStation = getBaseStationPosition(map);
@@ -193,6 +221,15 @@ void calculateCosts(t_map map)
 }
 /* definition of exported functions */
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : createMapFromFile
+Cette fonction crée une carte (map) à partir d'un fichier en respectant les règles de format de fichier. Elle initialise
+les sols et les coûts en fonction des valeurs lues et appelle `calculateCosts` et `removeFalseCrevasses`.
+Elle prend en paramètre :
+  - `filename` : nom du fichier contenant les informations de la carte.
+Elle renvoie une structure `t_map` remplie.
+----------------------------------------------------------------------------------------------------------------------*/
 t_map createMapFromFile(char *filename)
 {
     /* rules for the file :
@@ -247,11 +284,27 @@ t_map createMapFromFile(char *filename)
     return map;
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : createTrainingMap
+Cette fonction crée une carte d'entraînement en appelant `createMapFromFile` avec un fichier de carte prédéfini.
+Elle ne prend aucun paramètre.
+Elle renvoie une structure `t_map`.
+----------------------------------------------------------------------------------------------------------------------*/
 t_map createTrainingMap()
 {
     return createMapFromFile("..\\maps\\training.map");
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : displayMap
+Cette fonction affiche la carte (map) dans la console en représentant chaque type de sol par un motif spécifique
+(3x3 caractères). Elle utilise des caractères symboliques pour représenter chaque type de terrain.
+Elle prend en paramètre :
+  - `map` : la carte de type `t_map` à afficher.
+Elle ne renvoie rien.
+----------------------------------------------------------------------------------------------------------------------*/
 void displayMap(t_map map)
 {
     /** the rules for display are :

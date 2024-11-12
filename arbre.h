@@ -6,7 +6,7 @@
 #define ARBRE_H
 #include "moves.h"
 #define MAX_CHILDREN 9
-
+#include <stdlib.h>
 
 typedef struct node_s {
     int cost;

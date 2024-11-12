@@ -6,10 +6,10 @@
 void move_marc(t_localisation* MARC, t_move da_move) {
     t_localisation Prochaine_Loc;
     Prochaine_Loc = move(*MARC, da_move);
-    //printf("Prochaine coordonnées du robot: x: %d, y: %d\n", Prochaine_Loc.pos.x, Prochaine_Loc.pos.y);
+    //printf("Prochaine coordonnï¿½es du robot: x: %d, y: %d\n", Prochaine_Loc.pos.x, Prochaine_Loc.pos.y);
     //printf("Prochaine Orientation du robot: x: %d\n", Prochaine_Loc.ori);
     if (isValidLocalisation(Prochaine_Loc.pos, 12, 12) == 1) {
-        //printf("Prochaine coordonnées valide\n");
+        //printf("Prochaine coordonnï¿½es valide\n");
         updateLocalisation(MARC, da_move);
     }
     else {
@@ -24,7 +24,7 @@ int main() {
     t_localisation MARC;
     MARC = loc_init(0, 0, EAST);
 
-    printf("Coordonnées du robox: x: %d, y: %d\n",MARC.pos.x, MARC.pos.y);
+    printf("CoordonnÃ©es du robox: x: %d, y: %d\n",MARC.pos.x, MARC.pos.y);
     // The following preprocessor directive checks if the code is being compiled on a Windows system.
     // If either _WIN32 or _WIN64 is defined, it means we are on a Windows platform.
     // On Windows, file paths use backslashes (\), hence we use the appropriate file path for Windows.
@@ -56,7 +56,7 @@ int main() {
     printf("\nDisplay map:\n");
     displayMap(map);
     int flipflop = 0;
-    printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
+    printf("CoordonnÃ©es du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
     printf("Orientation du robot: x: %d\n", MARC.ori);
     for (int i = 0; i < map.y_max; i++)
     {
@@ -78,7 +78,7 @@ int main() {
         }
 
     }
-    printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
+    printf("Coordonnï¿½es du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
     printf("Orientation du robot: x: %d\n", MARC.ori);
 
     return 0;

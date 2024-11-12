@@ -18,5 +18,24 @@ typedef struct arbre_s {
     node_t* root;
 } arbre_t;
 
+node_t* create_node(int cost, t_move move);
+
+int add_node(node_t* node, node_t* child);
+
+void free_node(node_t* node);
+
+int is_leaf(node_t* node);
+
+void find_smallest_Leaf(node_t *node, int *val);
+
+void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* minPath, int level);
+
+arbre_t* create_arbre();
+
+void free_arbre(arbre_t* arbre);
+
+
+
+
 
 #endif //ARBRE_H

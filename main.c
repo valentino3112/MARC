@@ -2,7 +2,7 @@
 #include "map.h"
 #include "loc.h"
 #include "moves.h"
-
+#include "arbre.h"
 void move_marc(t_localisation* MARC, t_move da_move) {
     t_localisation Prochaine_Loc;
     Prochaine_Loc = move(*MARC, da_move);
@@ -80,6 +80,8 @@ int main() {
     }
     printf("Coordonn�es du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
     printf("Orientation du robot: x: %d\n", MARC.ori);
+
+
 
     return 0;
 }

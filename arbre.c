@@ -44,6 +44,7 @@ void free_node(node_t* node) {
     free(node);
 }
 
+/*
 node_t* find_min(node_t* node) {
     node_t* min = node;
     int min_cost = min->cost;
@@ -58,10 +59,63 @@ node_t* find_min(node_t* node) {
         }
     }
     return min;
+}*/
+
+int is_leaf(node_t* node){
+    int val = 1;
+    for (int i = 0; i < MAX_CHILDREN; i++) {
+        if (node->children[i] != NULL) {
+            val = 0;
+            break;
+        }
+    }
+    return val;
 }
 
+//val : OUT
+void find_smallest_Leaf(node_t *node, int *val) {
+    if (node == NULL) {
+        return;
+    }
 
+    if (is_leaf(node)) {
+        if (node->cost < *val) {
+            *val = node->cost;
+        }
+    } else {
+        for (int i = 0; i < MAX_CHILDREN; i++) {
+            find_smallest_Leaf(node->children[i], val);
+        }
+    }
+}
 
+void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* minPath, int level) {
+    if (node == NULL) return;
+
+    // Ajouter le mouvement courant au chemin
+    path[level] = node->move;
+
+    // Si le nœud est une feuille (n’a pas d’enfants)
+    if (is_leaf(node)) {
+        // Vérifier si cette feuille a un coût inférieur au coût minimal
+        if (node->cost < *minCost) {
+            *minCost = node->cost;
+            *minNode = node;
+            // Copier le chemin courant vers le chemin minimal
+            for (int i = 0; i <= level; i++) {
+                minPath[i] = path[i];
+            }
+            minPath[level + 1] = -1; // Marquer la fin du chemin
+        }
+    }
+
+    // Parcourir les enfants
+    for (int i = 0; i < MAX_CHILDREN; i++) {
+        if (node->children[i] != NULL) {
+            findMinPath(node->children[i], minCost, minNode, path, minPath, level + 1);
+        }
+    }
+}
 
 
 

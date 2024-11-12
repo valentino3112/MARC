@@ -23,6 +23,16 @@ t_queue createQueue(int size)
     return queue;
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : enqueue
+Cette fonction ajoute un élément `pos` à la fin de la file `p_queue`.
+Elle prend en paramètres :
+  - `p_queue` : un pointeur vers la file (`t_queue`) dans laquelle insérer l'élément.
+  - `pos` : la position (`t_position`) à ajouter.
+Prérequis : la file ne doit pas être pleine.
+La fonction ne renvoie rien ; elle met directement à jour la file.
+----------------------------------------------------------------------------------------------------------------------*/
 void enqueue(t_queue *p_queue, t_position pos)
 {
     // the queue must not be full
@@ -32,6 +42,15 @@ void enqueue(t_queue *p_queue, t_position pos)
     return;
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : dequeue
+Cette fonction retire et renvoie l'élément en tête de la file `p_queue`.
+Elle prend en paramètre :
+  - `p_queue` : un pointeur vers la file (`t_queue`) dans laquelle retirer l'élément.
+Prérequis : la file ne doit pas être vide.
+Elle renvoie l'élément retiré (`t_position`).
+----------------------------------------------------------------------------------------------------------------------*/
 t_position dequeue(t_queue *p_queue)
 {
     // the queue must not be empty

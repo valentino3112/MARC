@@ -7,7 +7,7 @@
 #include "moves.h"
 #include "map.h"
 #define MAX_CHILDREN 9
-#define HAUTEUR_ARBRE 99999
+#define HAUTEUR_ARBRE 5
 #include <stdlib.h>
 
 typedef struct node_s {

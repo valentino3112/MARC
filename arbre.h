@@ -7,7 +7,7 @@
 #include "moves.h"
 #include "map.h"
 #define MAX_CHILDREN 9
-#define HAUTEUR_ARBRE 5
+#define HAUTEUR_ARBRE 99999
 #include <stdlib.h>
 
 typedef struct node_s {
@@ -37,7 +37,7 @@ arbre_t* create_arbre();
 
 void free_arbre(arbre_t* arbre);
 
-
+void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, t_localisation sim_MARC);
 
 
 

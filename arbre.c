@@ -133,7 +133,7 @@ arbre_t* create_arbre() {
 
 // example: t_move moves = [F_10, F_10, F_10, T_LEFT, T_RIGHT, B_10]
 // int move_occ = [3,0,0,1,1,1,0]
-void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, int x, int y, t_localisation sim_MARC){
+void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, t_localisation sim_MARC){
     if (niveau >= HAUTEUR_ARBRE) return;
     int sum = 0;
     for (int i = 0; i < 7; i++){
@@ -166,7 +166,8 @@ void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, in
             node_t* child = create_node(costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x], i);
             parent->children[parent->TL++] = child;
             modified_occ[i] = modified_occ[i] - 1;
-            remplire_arbre(child, niveau + 1, move_occ, costs, Prochaine_Loc.pos.x, Prochaine_Loc.pos.y,  sim_MARC);
+            remplire_arbre(child, niveau + 1, modified_occ, costs,  Prochaine_Loc);
+            modified_occ[i] = modified_occ[i] + 1;
         }
     }
 }

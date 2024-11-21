@@ -5,6 +5,22 @@
 #include "arbre.h"
 #include "utils.h"
 
+void printTree(node_t* node, int level) {
+    if (!node) return;
+
+    // Print the current node with indentation
+    for (int i = 0; i < level; i++) printf("  "); // Indentation for the current level
+    printf("Cost: %d, Move: ", node->cost);
+    printMove(node->move);
+    printf(", TL: %d\n", node->TL);
+
+    // Recursively print each child
+    for (int i = 0; i < MAX_CHILDREN; i++) {
+        if (node->children[i]) {
+            printTree(node->children[i], level + 1);
+        }
+    }
+}
 
 int main() {
     t_map map;
@@ -92,7 +108,14 @@ int main() {
     }
     printf("---FIN DU TESTE MOUVEMENT ALEATOIRE ROBOT----\n");
 
-
-
+    printf("---TESTE ARBRE ----\n");
+    MARC = loc_init(5, 5, EAST);
+    arbre_t* test = create_arbre();
+    int move_occ[7] = {2,1,0,0,1,1,0};
+    node_t* racine = create_node(3,0);
+    test->root = racine;
+    remplire_arbre(racine, 0, &move_occ, map.costs, MARC);
+    printTree(racine,0);
+    printf("---FIN TESTE ARBRE ----\n");
     return 0;
 }

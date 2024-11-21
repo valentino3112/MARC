@@ -3,28 +3,16 @@
 #include "loc.h"
 #include "moves.h"
 #include "arbre.h"
-void move_marc(t_localisation* MARC, t_move da_move) {
-    t_localisation Prochaine_Loc;
-    Prochaine_Loc = move(*MARC, da_move);
-    //printf("Prochaine coordonn�es du robot: x: %d, y: %d\n", Prochaine_Loc.pos.x, Prochaine_Loc.pos.y);
-    //printf("Prochaine Orientation du robot: x: %d\n", Prochaine_Loc.ori);
-    if (isValidLocalisation(Prochaine_Loc.pos, 12, 12) == 1) {
-        //printf("Prochaine coordonn�es valide\n");
-        updateLocalisation(MARC, da_move);
-    }
-    else {
-        printf("move non valide %d %d\n", Prochaine_Loc.pos.x, Prochaine_Loc.pos.y);
-    }
-}
+#include "utils.h"
 
 
 int main() {
     t_map map;
     //Creation de notre robot
     t_localisation MARC;
-    MARC = loc_init(0, 0, EAST);
+    MARC = loc_init(0, 0, EAST); //Position initial
 
-    printf("Coordonnées du robox: x: %d, y: %d\n",MARC.pos.x, MARC.pos.y);
+    printf("Coordonnées du robot: x: %d, y: %d\n",MARC.pos.x, MARC.pos.y);
     // The following preprocessor directive checks if the code is being compiled on a Windows system.
     // If either _WIN32 or _WIN64 is defined, it means we are on a Windows platform.
     // On Windows, file paths use backslashes (\), hence we use the appropriate file path for Windows.
@@ -55,14 +43,17 @@ int main() {
     }
     printf("\nDisplay map:\n");
     displayMap(map);
-    int flipflop = 0;
+
     printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
     printf("Orientation du robot: x: %d\n", MARC.ori);
-    for (int i = 0; i < map.y_max; i++)
+    /*
+    int flipflop = 0;
+    for (int i = 0; i < map.y_max - 1; i++)
     {
-        for (int j = 0; j < map.x_max; j++)
+        for (int j = 0; j < map.x_max - 1; j++)
         {
             move_marc(&MARC, F_10);
+
         }
         if (flipflop == 0) {
             move_marc(&MARC, T_RIGHT);
@@ -78,8 +69,28 @@ int main() {
         }
 
     }
-    printf("Coordonn�es du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
+    move_marc(&MARC, U_TURN);
+    move_marc(&MARC, U_TURN);
+    printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
     printf("Orientation du robot: x: %d\n", MARC.ori);
+    printf("cost %d", map.costs[0][4] );
+    */
+    printf("----TESTE MOUVEMENT ALEATOIRE ROBOT----\n");
+    MARC = loc_init(5, 5, EAST);
+    t_move result[9];
+
+    // Phase test
+    tirage_aleatoire(result);
+    printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
+    printf("Orientation du robot: x: %d\n", MARC.ori);
+    for(int i = 0; i < 9; i++){
+        printMove(result[i]);
+        printf("\n");
+        move_marc(&MARC, result[i]);
+        printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
+        printf("Orientation du robot: x: %d\n", MARC.ori);
+    }
+    printf("---FIN DU TESTE MOUVEMENT ALEATOIRE ROBOT----\n");
 
 
 

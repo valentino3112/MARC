@@ -4,16 +4,18 @@
 
 #include "arbre.h"
 
+
 #include <stdio.h>
 
 node_t* create_node(int cost, t_move move) {
-    node_t* new_node = malloc(sizeof(node_t));
+    node_t* new_node = (node_t*)malloc(sizeof(node_t));
     if (new_node == NULL) {
         printf("Erreur\n");
         return NULL;
     }
     new_node->cost = cost;
     new_node->move = move;
+    new_node->TL = 0;
     for (int i = 0; i < MAX_CHILDREN; i++) {
         new_node->children[i] = NULL;
     }
@@ -129,6 +131,45 @@ arbre_t* create_arbre() {
     return new_arbre;
 }
 
+// example: t_move moves = [F_10, F_10, F_10, T_LEFT, T_RIGHT, B_10]
+// int move_occ = [3,0,0,1,1,1,0]
+void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, int x, int y, t_localisation sim_MARC){
+    if (niveau >= HAUTEUR_ARBRE) return;
+    int sum = 0;
+    for (int i = 0; i < 7; i++){
+        sum = sum + move_occ[i];
+    }
+    if (sum == 0) return;
+    t_localisation Prochaine_Loc;
+
+    int modified_occ[7];
+    for (int i = 0; i < 7; i++){
+        modified_occ[i] = move_occ[i];
+    }
+
+    /*
+    int occ = 0;
+    for (t_move move = 0; move < 7; move++){
+        if (move_occ[move] != 0) {
+            occ = move_occ[move];
+            break;
+        }
+    }
+    */
+    //racine->children[racine->TL] = create_node(costs[y][x],mouvements[i]);
+    for (int i = 0; i < 7; i++){
+        if (move_occ[i] <= 0){
+            continue; //continue or break? idk what to put there lololol
+        }
+        for (int j = 0; j < move_occ[i]; j++) {
+            Prochaine_Loc = move(sim_MARC, i);
+            node_t* child = create_node(costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x], i);
+            parent->children[parent->TL++] = child;
+            modified_occ[i] = modified_occ[i] - 1;
+            remplire_arbre(child, niveau + 1, move_occ, costs, Prochaine_Loc.pos.x, Prochaine_Loc.pos.y,  sim_MARC);
+        }
+    }
+}
 
 void free_arbre(arbre_t* arbre) {
 

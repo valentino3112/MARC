@@ -16,4 +16,6 @@ add_executable(untitled1 main.c
         stack.h
         arbre.c
         arbre.h
+        utils.c
+        utils.h
 )

@@ -4,6 +4,7 @@
 #include "moves.h"
 #include "arbre.h"
 #include "utils.h"
+#include "time_calcul.h"
 
 void printTree(node_t* node, int level) {
     if (!node) return;
@@ -114,8 +115,50 @@ int main() {
     int move_occ[7] = {2,1,0,0,1,1,0};
     node_t* racine = create_node(3,0);
     test->root = racine;
+
+
     remplire_arbre(racine, 0, &move_occ, map.costs, MARC);
-    printTree(racine,0);
-    printf("---FIN TESTE ARBRE ----\n");
+
+
+    //printTree(racine,0);
+    printf("---FIN TESTE ARBRE ----\n\n\n");
+
+
+    printf("---TESTE TEMPS DE CALCUL ----\n");
+    double temps = calculer_temps_construction_arbre(racine, move_occ, map.costs, MARC);
+    printf("Temps de construction de l'arbre: %f\n", temps);
+    printf("---FIN TESTE TEMPS DE CALCUL ----\n\n\n");
+
+
+    //test de la fonction find_smallest_Leaf
+    printf("---TESTE FONCTION find_smallest_Leaf ----\n");
+    int val = 9999;
+    find_smallest_Leaf(racine, &val);
+    printf("Valeur minimal de la feuille: %d\n", val);
+    //tmep de recherche de la feuille minimal
+    double temps_recherche = calculer_temps_recherche_feuille_min(racine);
+    printf("Temps de recherche de la feuille minimal: %f\n", temps_recherche);
+
+    printf("---FIN TESTE FONCTION find_smallest_Leaf ----\n\n\n");
+
+
+    //test de la fonction findMinPath
+    printf("---TESTE FONCTION findMinPath ----\n");
+    int minCost = val;
+    node_t* minNode = NULL;
+    int path[HAUTEUR_ARBRE];
+    int minPath[HAUTEUR_ARBRE];
+    findMinPath(racine, &minCost, &minNode, path, minPath, 0);
+    printf("Chemin minimal: ");
+    for (int i = 0; i < HAUTEUR_ARBRE; i++) {
+        if (minPath[i] == -1) break;
+        printMove(minPath[i]);
+        printf(" -> ");
+    }
+    printf("\n");
+    printf("Temps de recherche du chemin minimal: %f\n", calculer_chemin_racine_vers_feuille(racine, minNode, path, minPath));
+    printf("---FIN TESTE FONCTION findMinPath ----\n");
+
+
     return 0;
 }

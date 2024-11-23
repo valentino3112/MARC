@@ -18,4 +18,6 @@ add_executable(untitled1 main.c
         arbre.h
         utils.c
         utils.h
+        time_calcul.c
+        time_calcul.h
 )

@@ -42,6 +42,7 @@ double calculer_chemin_racine_vers_feuille(node_t* racine, node_t* feuille, int*
     return (end_time.tv_sec - start_time.tv_sec) + (end_time.tv_usec - start_time.tv_usec) / 1000000.0;
 }
 
+
 // Exemple complet de guidage de MARC depuis sa position d’origine vers la station de base
 void guidage_complet(t_map map, t_localisation MARC) {
     // Implémentation du guidage complet

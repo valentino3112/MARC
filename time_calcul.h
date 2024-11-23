@@ -11,4 +11,5 @@ double calculer_temps_construction_arbre(node_t* racine, int* move_occ, int** co
 double calculer_temps_recherche_feuille_min(node_t* racine);
 double calculer_chemin_racine_vers_feuille(node_t* racine, node_t* feuille, int* path, int* minPath);
 
+
 #endif //UNTITLED1_TIME_CALCUL_H

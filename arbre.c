@@ -28,7 +28,7 @@ int add_node(node_t* node, node_t* child){
         return 0;
     int cpt=0;
     while(node->children[cpt]!=NULL) {
-    cpt++;
+        cpt++;
     }
     node->children[cpt]=child;
     return 1;
@@ -100,7 +100,7 @@ void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* 
     // Si le nœud est une feuille (n’a pas d’enfants)
     if (is_leaf(node)) {
         // Vérifier si cette feuille a un coût inférieur au coût minimal
-        if (node->cost < *minCost) {
+        if (node->cost <= *minCost) {
             *minCost = node->cost;
             *minNode = node;
             // Copier le chemin courant vers le chemin minimal
@@ -179,4 +179,3 @@ void free_arbre(arbre_t* arbre) {
     free_node(arbre->root);
     free(arbre);
 }
-

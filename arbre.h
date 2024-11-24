@@ -37,7 +37,7 @@ arbre_t* create_arbre();
 
 void free_arbre(arbre_t* arbre);
 
-void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, t_localisation sim_MARC);
+void remplire_arbre(node_t* parent, int niveau, int move_occ[7], t_map map, t_localisation sim_MARC, int secoue);
 
 
 

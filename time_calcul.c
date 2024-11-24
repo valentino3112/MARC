@@ -4,18 +4,19 @@
 #include <sys/time.h>
 #include "time_calcul.h"
 //Fonctions pour calculer le temps d'execution de :
-// • la consturction de l'arbre
-// • la recherche d'une feuille de valeur minimal parmis les feuilles de l'arbre
-// • le calcul du chemin de la racine vers la feuille
-// • Un exemple complet de guidage de MARC depuis sa position d’origine vers la station de base.
+// ï¿½ la consturction de l'arbre
+// ï¿½ la recherche d'une feuille de valeur minimal parmis les feuilles de l'arbre
+// ï¿½ le calcul du chemin de la racine vers la feuille
+// ï¿½ Un exemple complet de guidage de MARC depuis sa position dï¿½origine vers la station de base.
 
 
 
-// Fonction pour calculer le temps d'exécution de la construction de l'arbre
-double calculer_temps_construction_arbre(node_t* racine, int* move_occ, int** costs, t_localisation MARC){
+// Fonction pour calculer le temps d'exï¿½cution de la construction de l'arbre
+double calculer_temps_construction_arbre(node_t* racine, int* move_occ, t_map map, t_localisation MARC){
+    int** costs = map.costs;
     struct timeval start_time, end_time;
     gettimeofday(&start_time, NULL);
-    remplire_arbre(racine, 0, move_occ, costs, MARC);
+    remplire_arbre(racine, 0, move_occ, map, MARC, 0);
     gettimeofday(&end_time, NULL);
     return (end_time.tv_sec - start_time.tv_sec) + (end_time.tv_usec - start_time.tv_usec) / 1000000.0;
 }
@@ -43,7 +44,7 @@ double calculer_chemin_racine_vers_feuille(node_t* racine, node_t* feuille, int*
 }
 
 
-// Exemple complet de guidage de MARC depuis sa position d’origine vers la station de base
+// Exemple complet de guidage de MARC depuis sa position dï¿½origine vers la station de base
 void guidage_complet(t_map map, t_localisation MARC) {
-    // Implémentation du guidage complet
+    // Implï¿½mentation du guidage complet
 }

@@ -133,8 +133,14 @@ arbre_t* create_arbre() {
 
 // example: t_move moves = [F_10, F_10, F_10, T_LEFT, T_RIGHT, B_10]
 // int move_occ = [3,0,0,1,1,1,0]
-void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, t_localisation sim_MARC){
-    if (niveau >= HAUTEUR_ARBRE) return;
+void remplire_arbre(node_t* parent, int niveau, int move_occ[7], t_map map, t_localisation sim_MARC, int secoue){
+    int **costs = map.costs;
+    if (secoue == 0){
+        if (niveau >= HAUTEUR_ARBRE) return;
+    }else{
+        if (niveau >= HAUTEUR_ARBRE - 1) return; //si robot secoue 4 mouvement seulement
+    }
+
     int sum = 0;
     for (int i = 0; i < 7; i++){
         sum = sum + move_occ[i];
@@ -157,20 +163,56 @@ void remplire_arbre(node_t* parent, int niveau, int move_occ[7], int** costs, t_
     }
     */
     //racine->children[racine->TL] = create_node(costs[y][x],mouvements[i]);
-    for (int i = 0; i < 7; i++){
-        if (move_occ[i] <= 0){
-            continue; //continue or break? idk what to put there lololol
+    for (int move_i = 0; move_i < 7; move_i++){ //loop over move_occ
+        if (move_occ[move_i] <= 0){
+            continue; //if its 0 just skip
         }
-        for (int j = 0; j < move_occ[i]; j++) {
-            Prochaine_Loc = move(sim_MARC, i);
-            node_t* child = create_node(costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x], i);
+        for (int num_of_move = 0; num_of_move < move_occ[move_i]; num_of_move++) { //loop over occurence
+            //check position valide
+            if (isValidLocalisation(move(sim_MARC, move_i).pos, map.x_max, map.y_max) == 1) {
+                Prochaine_Loc = move(sim_MARC, move_i);
+            }else {
+                continue;
+            }
+            //check current soil for erg martien
+            if (map.soils[sim_MARC.pos.y][sim_MARC.pos.x] == 2){
+                if (move_i == F_10 || move_i == B_10){
+                    Prochaine_Loc = sim_MARC;
+                }
+                if (move_i == F_20){
+                    Prochaine_Loc = move(sim_MARC, F_10);
+                }
+                if (move_i == F_30){
+                    Prochaine_Loc = move(sim_MARC, F_20);
+                }
+                if (move_i == T_LEFT || move_i == T_RIGHT){
+                    Prochaine_Loc = sim_MARC;
+                }
+                if (move_i == U_TURN){
+                    Prochaine_Loc = move(sim_MARC, T_RIGHT);
+                }
+            }
+            //check current soil reg martien
+            if (map.soils[sim_MARC.pos.y][sim_MARC.pos.x] == 3 && secoue == 0){
+                printf("robot secoué\n");
+                //niveau++; //erreur là
+                secoue = 1;
+            }
+            //printf("%d", costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x]);
+            node_t* child = create_node(costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x], move_i);
+
+            //printf("%d\n", parent->TL);
+            if(parent == 0x55555555ca10){
+                printf("\t%d\n");
+            }
             parent->children[parent->TL++] = child;
-            modified_occ[i] = modified_occ[i] - 1;
-            remplire_arbre(child, niveau + 1, modified_occ, costs,  Prochaine_Loc);
-            modified_occ[i] = modified_occ[i] + 1;
+            modified_occ[move_i] = modified_occ[move_i] - 1;
+            remplire_arbre(child, niveau + 1, modified_occ, map,  Prochaine_Loc, secoue);
+            modified_occ[move_i] = modified_occ[move_i] + 1;
         }
     }
 }
+
 
 void free_arbre(arbre_t* arbre) {
 

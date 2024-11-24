@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 
-node_t* create_node(int cost, t_move move) {
+node_t* create_node(int cost, t_move move, int nbrchildren) {
     node_t* new_node = (node_t*)malloc(sizeof(node_t));
     if (new_node == NULL) {
         printf("Erreur\n");
@@ -16,7 +16,7 @@ node_t* create_node(int cost, t_move move) {
     new_node->cost = cost;
     new_node->move = move;
     new_node->TL = 0;
-    for (int i = 0; i < MAX_CHILDREN; i++) {
+    for (int i = 0; i < nbrchildren; i++) {
         new_node->children[i] = NULL;
     }
     return new_node;
@@ -36,12 +36,12 @@ int add_node(node_t* node, node_t* child){
 }
 
 
-void free_node(node_t* node) {
+void free_node(node_t* node,int nbrchildren) {
     if(node==NULL)
         return;
-    for (int i = 0; i < MAX_CHILDREN; i++) {
+    for (int i = 0; i < nbrchildren; i++) {
         if(node->children[i]!=NULL)
-            free_node(node->children[i]);
+            free_node(node->children[i],nbrchildren);
     }
     free(node);
 }
@@ -63,9 +63,9 @@ node_t* find_min(node_t* node) {
     return min;
 }*/
 
-int is_leaf(node_t* node){
+int is_leaf(node_t* node, int nbrchildren){
     int val = 1;
-    for (int i = 0; i < MAX_CHILDREN; i++) {
+    for (int i = 0; i < nbrchildren; i++) {
         if (node->children[i] != NULL) {
             val = 0;
             break;
@@ -75,30 +75,30 @@ int is_leaf(node_t* node){
 }
 
 //val : OUT
-void find_smallest_Leaf(node_t *node, int *val) {
+void find_smallest_Leaf(node_t *node, int *val,int nbrchildren) {
     if (node == NULL) {
         return;
     }
 
-    if (is_leaf(node)) {
+    if (is_leaf(node,nbrchildren)) {
         if (node->cost < *val) {
             *val = node->cost;
         }
     } else {
-        for (int i = 0; i < MAX_CHILDREN; i++) {
-            find_smallest_Leaf(node->children[i], val);
+        for (int i = 0; i < nbrchildren; i++) {
+            find_smallest_Leaf(node->children[i], val ,nbrchildren);
         }
     }
 }
 
-void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* minPath, int level) {
+void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* minPath, int level,int nbrchildren) {
     if (node == NULL) return;
 
     // Ajouter le mouvement courant au chemin
     path[level] = node->move;
 
     // Si le nœud est une feuille (n’a pas d’enfants)
-    if (is_leaf(node)) {
+    if (is_leaf(node,nbrchildren)) {
         // Vérifier si cette feuille a un coût inférieur au coût minimal
         if (node->cost <= *minCost) {
             *minCost = node->cost;
@@ -112,9 +112,9 @@ void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* 
     }
 
     // Parcourir les enfants
-    for (int i = 0; i < MAX_CHILDREN; i++) {
+    for (int i = 0; i < nbrchildren; i++) {
         if (node->children[i] != NULL) {
-            findMinPath(node->children[i], minCost, minNode, path, minPath, level + 1);
+            findMinPath(node->children[i], minCost, minNode, path, minPath, level + 1,nbrchildren);
         }
     }
 }
@@ -133,7 +133,7 @@ arbre_t* create_arbre() {
 
 // example: t_move moves = [F_10, F_10, F_10, T_LEFT, T_RIGHT, B_10]
 // int move_occ = [3,0,0,1,1,1,0]
-void remplire_arbre(node_t* parent, int niveau, int move_occ[7], t_map map, t_localisation sim_MARC, int secoue){
+void remplire_arbre(node_t* parent, int niveau, int move_occ[7], t_map map, t_localisation sim_MARC, int secoue,int nbrchildren){
     int **costs = map.costs;
     if (secoue == 0){
         if (niveau >= HAUTEUR_ARBRE) return;
@@ -199,25 +199,25 @@ void remplire_arbre(node_t* parent, int niveau, int move_occ[7], t_map map, t_lo
                 secoue = 1;
             }
             //printf("%d", costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x]);
-            node_t* child = create_node(costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x], move_i);
+            node_t* child = create_node(costs[Prochaine_Loc.pos.y][Prochaine_Loc.pos.x], move_i,nbrchildren);
 
             //printf("%d\n", parent->TL);
-            if(parent == 0x55555555ca10){
+            /*if(parent == 0x55555555ca10){
                 printf("\t%d\n");
-            }
+            }*/
             parent->children[parent->TL++] = child;
             modified_occ[move_i] = modified_occ[move_i] - 1;
-            remplire_arbre(child, niveau + 1, modified_occ, map,  Prochaine_Loc, secoue);
+            remplire_arbre(child, niveau + 1, modified_occ, map,  Prochaine_Loc, secoue,nbrchildren);
             modified_occ[move_i] = modified_occ[move_i] + 1;
         }
     }
 }
 
 
-void free_arbre(arbre_t* arbre) {
+void free_arbre(arbre_t* arbre,int nbrchildren) {
 
     if (arbre == NULL)
         return;
-    free_node(arbre->root);
+    free_node(arbre->root,nbrchildren);
     free(arbre);
 }

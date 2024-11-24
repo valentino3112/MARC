@@ -29,7 +29,7 @@ void printTree(node_t* node, int level) {
         }
     }
 }
-
+/*
 int main() {
     t_map map;
     //Creation de notre robot
@@ -98,7 +98,7 @@ int main() {
     printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
     printf("Orientation du robot: x: %d\n", MARC.ori);
     printf("cost %d", map.costs[0][4] );
-    */
+    *//*
     printf("----TESTE MOUVEMENT ALEATOIRE ROBOT----\n");
     MARC = loc_init(5, 5, EAST);
     t_move result[9];
@@ -178,22 +178,22 @@ int main() {
     return 0;
 }
 
-
-int menu() {
+*/
+int main() {
     int QUIT = 0;
     while(QUIT==0) {
         printf("---MENU DE MARC ----\n");
         printf("Quelle carte voulez-vous utiliser ?\n");
         int carte=-1;
-        while (carte<=1 || carte>5) {
+        while (carte<1 || carte>5) {
             printf("Entrez le nombre de 1 à 5 correspondant à la carte\n");
             scanf("%d", &carte);
         }
         printf("Parmis combien de mouvement voulez-vous faire choisir le rover ?\n");
-        int nbchoix=-1;
-        while (nbchoix<=1) {
+        int nbrchildren=-1;
+        while (nbrchildren<=1) {
             printf("Entrez un suppérieur à 1\n");
-            scanf("%d", &nbchoix);
+            scanf("%d", &nbrchildren);
         }
         t_map map;
         //Creation de notre robot
@@ -238,5 +238,59 @@ int menu() {
             break;
         }
         displayMap(map);
+        printf("---TESTE ARBRE ----\n");
+        MARC = loc_init(0, 0, EAST);
+        arbre_t* test = create_arbre();
+        int move_occ[7] = {2,2,0,0,1,2,2};
+        node_t* racine = create_node(map.costs[MARC.pos.y][MARC.pos.x],999,nbrchildren);
+        test->root = racine;
+
+
+        remplire_arbre(racine, 0, &move_occ, map, MARC, 0,nbrchildren);
+
+
+        printTree(racine,0);
+        printf("---FIN TESTE ARBRE ----\n\n\n");
+
+        printf("---TESTE TEMPS DE CALCUL ----\n");
+        //double temps = calculer_temps_construction_arbre(racine, move_occ, map, MARC);
+        double temps = 0;
+        printf("Temps de construction de l'arbre: %f\n", temps);
+        printf("---FIN TESTE TEMPS DE CALCUL ----\n\n\n");
+
+
+        //test de la fonction find_smallest_Leaf
+        printf("---TESTE FONCTION find_smallest_Leaf ----\n");
+        int val = 9999;
+        find_smallest_Leaf(racine, &val,nbrchildren);
+        printf("Valeur minimal de la feuille: %d\n", val);
+        //tmep de recherche de la feuille minimal
+        double temps_recherche = calculer_temps_recherche_feuille_min(racine,nbrchildren);
+        printf("Temps de recherche de la feuille minimal: %f\n", temps_recherche);
+
+        printf("---FIN TESTE FONCTION find_smallest_Leaf ----\n\n\n");
+
+
+        //test de la fonction findMinPath
+        printf("---TESTE FONCTION findMinPath ----\n");
+        int minCost = val;
+        node_t* minNode = NULL;
+        int path[HAUTEUR_ARBRE];
+        int minPath[HAUTEUR_ARBRE];
+        findMinPath(racine, &minCost, &minNode, path, minPath, 0,nbrchildren);
+        printf("Chemin minimal: ");
+        for (int i = 0; i < HAUTEUR_ARBRE; i++) {
+            if (minPath[i] == -1) break;
+            printMove(minPath[i]);
+            printf(" -> ");
+        }
+        printf("\n");
+        printf("Temps de recherche du chemin minimal: %f\n", calculer_chemin_racine_vers_feuille(racine, minNode, path, minPath,nbrchildren));
+        printf("---FIN TESTE FONCTION findMinPath ----\n");
+
+
+    QUIT = 1;
     }
-}*/
+
+
+}

@@ -6,13 +6,6 @@
 #include "utils.h"
 #include "time_calcul.h"
 
-void to_occ(int move_occ[7], t_move result[9]){
-    for (int i = 0; i < 9; i++){
-        move_occ[result[i]] = move_occ[result[i]] + 1;
-    }
-}
-
-
 void printTree(node_t* node, int level) {
     if (!node) return;
 
@@ -41,9 +34,9 @@ int main() {
     // If either _WIN32 or _WIN64 is defined, it means we are on a Windows platform.
     // On Windows, file paths use backslashes (\), hence we use the appropriate file path for Windows.
 #if defined(_WIN32) || defined(_WIN64)
-    map = createMapFromFile("..\\maps\\example2.map");
+    map = createMapFromFile("..\\maps\\example1.map");
 #else
-    map = createMapFromFile("../maps/example1.map");
+    map = createMapFromFile("../maps/training.map");
 #endif
 
     printf("Map created with dimensions %d x %d\n", map.y_max, map.x_max);
@@ -104,10 +97,7 @@ int main() {
     t_move result[9];
 
     // Phase test
-    int miau[7] = {0,0,0,0,0,0,0};
     tirage_aleatoire(result);
-    to_occ(miau, result);
-
     printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
     printf("Orientation du robot: x: %d\n", MARC.ori);
     for(int i = 0; i < 9; i++){
@@ -117,29 +107,25 @@ int main() {
         printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
         printf("Orientation du robot: x: %d\n", MARC.ori);
     }
-    for(int i = 0; i < 7; i++){
-        printf("%d,", miau[i]);
-    }
     printf("---FIN DU TESTE MOUVEMENT ALEATOIRE ROBOT----\n");
 
     printf("---TESTE ARBRE ----\n");
-    MARC = loc_init(0, 0, EAST);
+    MARC = loc_init(5, 5, EAST);
     arbre_t* test = create_arbre();
-    int move_occ[7] = {2,2,0,0,1,2,2};
-    node_t* racine = create_node(map.costs[MARC.pos.y][MARC.pos.x],999);
+    int move_occ[7] = {2,1,0,0,1,1,0};
+    node_t* racine = create_node(3,0);
     test->root = racine;
 
 
-    remplire_arbre(racine, 0, &move_occ, map, MARC, 0);
+    remplire_arbre(racine, 0, &move_occ, map.costs, MARC);
 
 
-    printTree(racine,0);
+    //printTree(racine,0);
     printf("---FIN TESTE ARBRE ----\n\n\n");
 
 
     printf("---TESTE TEMPS DE CALCUL ----\n");
-    //double temps = calculer_temps_construction_arbre(racine, move_occ, map, MARC);
-    double temps = 0;
+    double temps = calculer_temps_construction_arbre(racine, move_occ, map.costs, MARC);
     printf("Temps de construction de l'arbre: %f\n", temps);
     printf("---FIN TESTE TEMPS DE CALCUL ----\n\n\n");
 
@@ -174,11 +160,8 @@ int main() {
     printf("---FIN TESTE FONCTION findMinPath ----\n");
 
 
-
     return 0;
 }
-
-
 int menu() {
     int QUIT = 0;
     while(QUIT==0) {
@@ -239,4 +222,4 @@ int menu() {
         }
         displayMap(map);
     }
-}*/
+}

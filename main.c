@@ -126,7 +126,7 @@ int main() {
     MARC = loc_init(0, 0, EAST);
     arbre_t* test = create_arbre();
     int move_occ[7] = {2,2,0,0,1,2,2};
-    node_t* racine = create_node(map.costs[MARC.pos.y][MARC.pos.x],0);
+    node_t* racine = create_node(map.costs[MARC.pos.y][MARC.pos.x],999);
     test->root = racine;
 
 

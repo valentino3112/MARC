@@ -41,7 +41,7 @@ int main() {
     // If either _WIN32 or _WIN64 is defined, it means we are on a Windows platform.
     // On Windows, file paths use backslashes (\), hence we use the appropriate file path for Windows.
 #if defined(_WIN32) || defined(_WIN64)
-    map = createMapFromFile("..\\maps\\example1.map");
+    map = createMapFromFile("..\\maps\\example2.map");
 #else
     map = createMapFromFile("../maps/example1.map");
 #endif
@@ -177,3 +177,66 @@ int main() {
 
     return 0;
 }
+
+
+int menu() {
+    int QUIT = 0;
+    while(QUIT==0) {
+        printf("---MENU DE MARC ----\n");
+        printf("Quelle carte voulez-vous utiliser ?\n");
+        int carte=-1;
+        while (carte<=1 || carte>5) {
+            printf("Entrez le nombre de 1 à 5 correspondant à la carte\n");
+            scanf("%d", &carte);
+        }
+        printf("Parmis combien de mouvement voulez-vous faire choisir le rover ?\n");
+        int nbchoix=-1;
+        while (nbchoix<=1) {
+            printf("Entrez un suppérieur à 1\n");
+            scanf("%d", &nbchoix);
+        }
+        t_map map;
+        //Creation de notre robot
+        t_localisation MARC;
+        MARC = loc_init(0, 0, EAST); //Position initial
+        printf("Coordonnées du robot: x: %d, y: %d\n",MARC.pos.x, MARC.pos.y);
+        switch (carte) {
+            case 1:
+                #if defined(_WIN32) || defined(_WIN64)
+                    map = createMapFromFile("..\\maps\\example1.map");
+                #else
+                    map = createMapFromFile("../maps/example1.map");
+                #endif
+            break;
+            case 2:
+                #if defined(_WIN32) || defined(_WIN64)
+                    map = createMapFromFile("..\\maps\\example2.map");
+                #else
+                    map = createMapFromFile("../maps/example2.map");
+                #endif
+            break;
+            case 3:
+                #if defined(_WIN32) || defined(_WIN64)
+                    map = createMapFromFile("..\\maps\\example3.map");
+                #else
+                    map = createMapFromFile("../maps/example3.map");
+                #endif
+            break;
+            case 4:
+                #if defined(_WIN32) || defined(_WIN64)
+                    map = createMapFromFile("..\\maps\\example4.map");
+                #else
+                    map = createMapFromFile("../maps/example4.map");
+                #endif
+            break;
+            case 5:
+                #if defined(_WIN32) || defined(_WIN64)
+                    map = createMapFromFile("..\\maps\\example5.map");
+                #else
+                    map = createMapFromFile("../maps/example5.map");
+                #endif
+            break;
+        }
+        displayMap(map);
+    }
+}*/

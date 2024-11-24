@@ -20,7 +20,7 @@ void printMove(t_move move) {
         case T_LEFT: printf("T_LEFT"); break;
         case T_RIGHT: printf("T_RIGHT"); break;
         case U_TURN: printf("U_TURN"); break;
-        default: printf("UNKNOWN");
+        default: printf("POSITION_INITIALE");
     }
 }
 

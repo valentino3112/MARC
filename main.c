@@ -5,7 +5,7 @@
 #include "arbre.h"
 #include "utils.h"
 #include "time_calcul.h"
-
+//test
 void to_occ(int move_occ[7], t_move result[9]){
     for (int i = 0; i < 9; i++){
         move_occ[result[i]] = move_occ[result[i]] + 1;

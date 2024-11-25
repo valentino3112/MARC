@@ -136,11 +136,28 @@ t_localisation translate(t_localisation loc, t_move move)
 
 /* definitions of exported functions */
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : getMoveAsString
+Cette fonction convertit un mouvement (`t_move`) en une cha�ne de caract�res lisible.
+Elle prend en param�tre :
+  - `move` : le mouvement � convertir.
+Elle renvoie une cha�ne de caract�res repr�sentant le mouvement.
+----------------------------------------------------------------------------------------------------------------------*/
 char *getMoveAsString(t_move move)
 {
     return _moves[move];
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : move
+Cette fonction effectue un mouvement complet en ajustant l'orientation et la position du robot selon le mouvement
+demand�. Elle prend en param�tres :
+  - `loc` : la localisation actuelle du robot.
+  - `move` : le mouvement � effectuer.
+Elle renvoie la nouvelle localisation apr�s la rotation et la translation.
+----------------------------------------------------------------------------------------------------------------------*/
 t_localisation move(t_localisation loc, t_move move)
 {
     t_localisation new_loc;
@@ -150,6 +167,15 @@ t_localisation move(t_localisation loc, t_move move)
     return new_loc;
 }
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+                            FONCTION : updateLocalisation
+Cette fonction met � jour la localisation du robot en modifiant directement l'emplacement point� par `p_loc` en fonction
+du mouvement sp�cifi� `m`. Elle prend en param�tres :
+  - `p_loc` : un pointeur vers la localisation actuelle du robot.
+  - `m` : le mouvement � effectuer.
+Elle ne renvoie rien ; la mise � jour est effectu�e directement dans la structure point�e.
+----------------------------------------------------------------------------------------------------------------------*/
 void updateLocalisation(t_localisation *p_loc, t_move m)
 {
     //printf("problem");

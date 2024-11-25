@@ -13,7 +13,7 @@
 typedef struct node_s {
     int cost;
     t_move move;
-    struct node_s* children[999];
+    struct node_s* children[MAX_CHILDREN];
     int TL;
 }node_t;
 
@@ -21,23 +21,23 @@ typedef struct arbre_s {
     node_t* root;
 } arbre_t;
 
-node_t* create_node(int cost, t_move move, int nbrchildren);
+node_t* create_node(int cost, t_move move);
 
 int add_node(node_t* node, node_t* child);
+t_localisation move_sans_teleporter(t_localisation loc, t_move da_move, t_map map);
+void free_node(node_t* node);
 
-void free_node(node_t* node, int nbrchildren);
+int is_leaf(node_t* node);
 
-int is_leaf(node_t* node, int nbrchildren);
+void find_smallest_Leaf(node_t *node, int *val);
 
-void find_smallest_Leaf(node_t *node, int *val, int nbrchildren);
-
-void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* minPath, int level, int nbrchildren);
+void findMinPath(node_t* node, int* minCost, node_t** minNode, int path[], int* minPath, int level);
 
 arbre_t* create_arbre();
 
-void free_arbre(arbre_t* arbre,int nbrchildren);
+void free_arbre(arbre_t* arbre);
 
-void remplire_arbre(node_t* parent, int niveau, int move_occ[7], t_map map, t_localisation sim_MARC, int secoue,int nbrchildren);
+void remplire_arbre(node_t* parent, int niveau, int move_occ[7], t_map map, t_localisation sim_MARC, int secoue);
 
 
 

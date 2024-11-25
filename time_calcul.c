@@ -12,11 +12,11 @@
 
 
 // Fonction pour calculer le temps d'ex�cution de la construction de l'arbre
-double calculer_temps_construction_arbre(node_t* racine, int* move_occ, t_map map, t_localisation MARC,int nbrchildren){
+double calculer_temps_construction_arbre(node_t* racine, int* move_occ, t_map map, t_localisation MARC){
     int** costs = map.costs;
     struct timeval start_time, end_time;
     gettimeofday(&start_time, NULL);
-    remplire_arbre(racine, 0, move_occ, map, MARC, 0,nbrchildren);
+    remplire_arbre(racine, 0, move_occ, map, MARC, 0);
     gettimeofday(&end_time, NULL);
     return (end_time.tv_sec - start_time.tv_sec) + (end_time.tv_usec - start_time.tv_usec) / 1000000.0;
 }
@@ -24,21 +24,21 @@ double calculer_temps_construction_arbre(node_t* racine, int* move_occ, t_map ma
 
 
 // Fonction pour calculer temps trouver la feuille de valeur minimal parmis les feuilles de l'arbre
-double calculer_temps_recherche_feuille_min(node_t* racine,int nbrchildren) {
+double calculer_temps_recherche_feuille_min(node_t* racine) {
     struct timeval start_time, end_time;
     gettimeofday(&start_time, NULL);
-    find_smallest_Leaf(racine, &racine->TL,nbrchildren);
+    find_smallest_Leaf(racine, &racine->TL);
     gettimeofday(&end_time, NULL);
     return (end_time.tv_sec - start_time.tv_sec) + (end_time.tv_usec - start_time.tv_usec) / 1000000.0;
 }
 
 // Fonction pour calculer le chemin de la racine vers la feuille
-double calculer_chemin_racine_vers_feuille(node_t* racine, node_t* feuille, int* path, int* minPath,int nbrchildren) {
+double calculer_chemin_racine_vers_feuille(node_t* racine, node_t* feuille, int* path, int* minPath) {
     struct timeval start_time, end_time;
     int val = 9999;
-    find_smallest_Leaf(racine, &val,nbrchildren);
+    find_smallest_Leaf(racine, &val);
     gettimeofday(&start_time, NULL);
-    findMinPath(racine, &val, &feuille, path, minPath, 0,nbrchildren);
+    findMinPath(racine, &val, &feuille, path, minPath, 0);
     gettimeofday(&end_time, NULL);
     return (end_time.tv_sec - start_time.tv_sec) + (end_time.tv_usec - start_time.tv_usec) / 1000000.0;
 }

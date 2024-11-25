@@ -1,85 +1,178 @@
 #include <stdio.h>
+#include <time.h>
 #include "map.h"
 #include "loc.h"
 #include "moves.h"
-
-void move_marc(t_localisation* MARC, t_move da_move) {
-    t_localisation Prochaine_Loc;
-    Prochaine_Loc = move(*MARC, da_move);
-    //printf("Prochaine coordonn�es du robot: x: %d, y: %d\n", Prochaine_Loc.pos.x, Prochaine_Loc.pos.y);
-    //printf("Prochaine Orientation du robot: x: %d\n", Prochaine_Loc.ori);
-    if (isValidLocalisation(Prochaine_Loc.pos, 12, 12) == 1) {
-        //printf("Prochaine coordonn�es valide\n");
-        updateLocalisation(MARC, da_move);
-    }
-    else {
-        printf("move non valide %d %d\n", Prochaine_Loc.pos.x, Prochaine_Loc.pos.y);
-    }
-}
+#include "arbre.h"
+#include "utils.h"
+#include "time_calcul.h"
 
 
+int final_path_buffer[999];
+
+//Main function, where the robot is guided to the base station by the user
 int main() {
+    t_localisation vrai_marc;
+    for (int i = 0; i < 999; i++){
+        final_path_buffer[i] = -2;
+    }
+    int x,y;
+    int QUIT = 0;
+
+    int phase = 0;
+    printf("---MENU DE MARC ----\n\n");
     t_map map;
-    //Creation de notre robot
-    t_localisation MARC;
-    MARC = loc_init(0, 0, EAST);
+    printf("Quelle carte voulez-vous utiliser ?\n");
+    int carte=-1;
+    while (carte<1 || carte>3) {
+        printf("Entrez le nombre de 1 à 3 correspondant à la carte : \n");
+        scanf("%d", &carte);
+    }
 
-    printf("Coordonn�es du robox: x: %d, y: %d\n",MARC.pos.x, MARC.pos.y);
-    // The following preprocessor directive checks if the code is being compiled on a Windows system.
-    // If either _WIN32 or _WIN64 is defined, it means we are on a Windows platform.
-    // On Windows, file paths use backslashes (\), hence we use the appropriate file path for Windows.
+    switch (carte) {
+        case 1:
 #if defined(_WIN32) || defined(_WIN64)
-    map = createMapFromFile("..\\maps\\training.map");
+            map = createMapFromFile("..\\maps\\example1.map");
 #else
-    map = createMapFromFile("../maps/training.map");
+            map = createMapFromFile("../maps/example1.map");
 #endif
+            break;
+        case 2:
+#if defined(_WIN32) || defined(_WIN64)
+            map = createMapFromFile("..\\maps\\example2.map");
+#else
+            map = createMapFromFile("../maps/example2.map");
+#endif
+            break;
+        case 3:
+#if defined(_WIN32) || defined(_WIN64)
+            map = createMapFromFile("..\\maps\\example3.map");
+#else
+            map = createMapFromFile("../maps/example3.map");
+#endif
+            break;
 
-    printf("Map created with dimensions %d x %d\n", map.y_max, map.x_max);
-    for (int i = 0; i < map.y_max; i++)
-    {
-        for (int j = 0; j < map.x_max; j++)
-        {
-            printf("%d ", map.soils[i][j]);
-        }
-        printf("\n");
     }
-    printf("\nDisplay cost:\n");
-    // printf the costs, aligned left 5 digits
-    for (int i = 0; i < map.y_max; i++)
-    {
-        for (int j = 0; j < map.x_max; j++)
-        {
-            printf("%-5d ", map.costs[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\nDisplay map:\n");
     displayMap(map);
-    int flipflop = 0;
-    printf("Coordonn�es du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
-    printf("Orientation du robot: x: %d\n", MARC.ori);
-    for (int i = 0; i < map.y_max; i++)
-    {
-        for (int j = 0; j < map.x_max; j++)
-        {
-            move_marc(&MARC, F_10);
+
+    t_localisation MARC;
+    printf("Souhaitez-vous définir un point de départ aléatoire pour MARC?\n1.OUI\n2.NON\n");
+    int choix_aleatoire=-1;
+    while (!(choix_aleatoire == 1 || choix_aleatoire == 2)) {
+        printf("Entrez un nombre, 1.OUI ou 2.NON\n");
+        scanf("%d", &choix_aleatoire);
+    }
+    srand(time(0));
+    if(choix_aleatoire == 1){
+        // Generate a random number between 0 and x_max and y_max
+        int random_x = rand() % map.x_max+1;
+        int random_y = rand() % map.y_max+1;
+        while (map.soils[random_y][random_x] == 4 || map.soils[random_y][random_x] == 0){
+            random_x = rand() % map.x_max+1;
+            random_y = rand() % map.y_max+1;
         }
-        if (flipflop == 0) {
-            move_marc(&MARC, T_RIGHT);
-            move_marc(&MARC, F_10);
-            move_marc(&MARC, T_RIGHT);
-            flipflop = 1;
+        MARC = loc_init(random_x, random_y, EAST);
+        x = random_x;
+        y = random_y;
+    }else{
+        MARC = loc_init(0, 0, EAST);
+        x = 0;
+        y = 0;
+    }
+    printf("Coordonnées du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
+
+    while(QUIT==0) {
+        t_move result[9];
+
+        // Phase test
+        int move_occ[7] = {0,0,0,0,0,0,0};
+        tirage_aleatoire(result);
+        to_occ(move_occ, result);
+
+        printf("---TESTE ARBRE ----\n\n");
+
+        arbre_t* test = create_arbre();
+        node_t* racine = create_node(map.costs[MARC.pos.y][MARC.pos.x],999);
+        test->root = racine;
+
+
+        //remplire_arbre(racine, 0, &move_occ, map, MARC, 0);
+        double temps = calculer_temps_construction_arbre(racine, move_occ, map, MARC);
+
+        printf("Souhaitez-vous afficher l'arbre ?\n1.OUI\n2.NON\n");
+        choix_aleatoire=-1;
+        while (!(choix_aleatoire == 1 || choix_aleatoire == 2)) {
+            printf("Entrez un nombre, 1.OUI ou 2.NON\n");
+            scanf("%d", &choix_aleatoire);
         }
-        else {
-            move_marc(&MARC, T_LEFT);
-            move_marc(&MARC, F_10);
-            move_marc(&MARC, T_LEFT);
-            flipflop = 0;
+        if(choix_aleatoire == 1){
+            printTree(racine,0);
         }
+        printf("---FIN TESTE ARBRE ----\n\n\n");
+
+        printf("---TESTE TEMPS DE CALCUL ----\n");
+
+
+        printf("Temps de construction de l'arbre: %f\n", temps);
+        printf("---FIN TESTE TEMPS DE CALCUL ----\n\n\n");
+
+
+        //test de la fonction find_smallest_Leaf
+        printf("---TESTE FONCTION find_smallest_Leaf ----\n\n");
+        int val = 9999;
+        find_smallest_Leaf(racine, &val);
+        printf("Valeur minimal de la feuille: %d\n", val);
+        //tmep de recherche de la feuille minimal
+        double temps_recherche = calculer_temps_recherche_feuille_min(racine);
+        printf("Temps de recherche de la feuille minimal: %f\n\n\n", temps_recherche);
+
+        printf("---FIN TESTE FONCTION find_smallest_Leaf ----\n\n\n");
+
+
+        //test de la fonction findMinPath
+        printf("---TESTE FONCTION findMinPath ----\n\n");
+        int minCost = val;
+        node_t* minNode = NULL;
+        int path[10];
+        int minPath[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+        int length = 0;
+        findMinPath(racine, &minCost, &minNode, path, minPath, 0);
+        printf("Chemin minimal: ");
+        for (int i = 0; i < 9; i++) {
+            if (minPath[i] == -1) break;
+            length++;
+            printMove(minPath[i]);
+            printf(" -> ");
+        }
+        printf("\n");
+        printf("Temps de recherche du chemin minimal: %f\n", calculer_chemin_racine_vers_feuille(racine, minNode, path, minPath));
+        printf("---FIN TESTE FONCTION findMinPath ----\n\n\n");
+        vrai_marc = MARC;
+        verif_base(&map, minPath, &vrai_marc);
+
+        for (int i = 1; i < HAUTEUR_ARBRE+1; i++){
+
+            final_path_buffer[i+phase*5] = minPath[i];
+        }
+        if (map.costs[vrai_marc.pos.y][vrai_marc.pos.x] == 0){
+            QUIT = 1;
+        }else{
+            MARC = vrai_marc;
+            phase++;
+        }
+        printf("Coordonnées du robot: x: %d, y: %d\n",vrai_marc.pos.x, vrai_marc.pos.y);
+
 
     }
-    printf("Coordonn�es du robot: x: %d, y: %d\n", MARC.pos.x, MARC.pos.y);
-    printf("Orientation du robot: x: %d\n", MARC.ori);
+    printf("coordonnées de MARC au debut: x: %d, y: %d\n", x, y);
+    printf("CHEMIN FINALE TROUVE EN %d PHASE\n\n", phase);
+    for (int i = 1; i < phase*5+5+2; i++){
 
-    return 0;
+        printMove(final_path_buffer[i]);
+        printf("->");
+    }
+    printf("\n");
+    printf("coordonnées de MARC à la fin: x: %d, y: %d\n", vrai_marc.pos.x, vrai_marc.pos.y);
 }
+
+

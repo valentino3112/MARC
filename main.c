@@ -9,7 +9,7 @@
 
 
 int final_path_buffer[999];
-
+double temps_global=0;
 //Main function, where the robot is guided to the base station by the user
 int main() {
     t_localisation vrai_marc;
@@ -114,6 +114,7 @@ int main() {
 
 
         printf("Temps de construction de l'arbre: %f\n", temps);
+        temps_global += temps;
         printf("---FIN TESTE TEMPS DE CALCUL ----\n\n\n");
 
 
@@ -125,7 +126,7 @@ int main() {
         //tmep de recherche de la feuille minimal
         double temps_recherche = calculer_temps_recherche_feuille_min(racine);
         printf("Temps de recherche de la feuille minimal: %f\n\n\n", temps_recherche);
-
+        temps_global += temps_recherche;
         printf("---FIN TESTE FONCTION find_smallest_Leaf ----\n\n\n");
 
 
@@ -146,6 +147,7 @@ int main() {
         }
         printf("\n");
         printf("Temps de recherche du chemin minimal: %f\n", calculer_chemin_racine_vers_feuille(racine, minNode, path, minPath));
+        temps_global += calculer_chemin_racine_vers_feuille(racine, minNode, path, minPath);
         printf("---FIN TESTE FONCTION findMinPath ----\n\n\n");
         vrai_marc = MARC;
         verif_base(&map, minPath, &vrai_marc);
@@ -172,6 +174,7 @@ int main() {
         printf("->");
     }
     printf("\n");
+    printf("Temps de calcul d'un voyage complet: %f\n", temps_global);
     printf("coordonnées de MARC à la fin: x: %d, y: %d\n", vrai_marc.pos.x, vrai_marc.pos.y);
 }
 
